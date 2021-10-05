@@ -68,12 +68,12 @@ export class UserService {
     try {
       const User = await this.UserModel.findById(_id);
       if (await bcrypt.compare(currentPassword, User.password)) {
+        if (await bcrypt.compare(newPassword, User.password))
+          return new GraphQLError("you've enter the same password");
         User.password = await bcrypt.hash(newPassword, 10);
         return await new this.UserModel(User).save();
       }
-      return new GraphQLError(
-        "Nothing to update. you've enter the same password"
-      );
+      return new GraphQLError('Wrong password entered');
     } catch (error) {
       console.log(error);
     }

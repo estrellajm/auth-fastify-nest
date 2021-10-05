@@ -20,7 +20,7 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => String)
+  @Query(() => String)
   async login(
     @Args('email') email: string,
     @Args('password') password: string
@@ -43,6 +43,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(GqlAuthGuard)
   async updateUserInput(
     @CurrentUser() user: User,
     @Args('updateUserInput') updateUserInput: UpdateUserInput
@@ -55,6 +56,7 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
+  @UseGuards(GqlAuthGuard)
   async updateUserPassword(
     @CurrentUser() user: User,
     @Args('currentPassword') currentPassword: string,
@@ -71,7 +73,7 @@ export class UserResolver {
     }
   }
 
-  @Query(() => String)
+  @Query(() => User)
   @UseGuards(GqlAuthGuard)
   async findOne(@Args('_id', { type: () => String }) _id: Types.ObjectId) {
     return await this.userService.findOne(_id);
