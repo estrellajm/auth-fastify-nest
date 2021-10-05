@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './user.entity';
-import { CreateUserInput } from './user-inputs.dto';
+import { CreateUserInput, UpdateUserInput } from './user-inputs.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { GraphQLError } from 'graphql';
@@ -24,8 +24,8 @@ export class UserService {
         .hash(createUserInput.password, 10)
         .then((r) => r);
       return await new this.UserModel(createUserInput).save();
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
@@ -37,16 +37,45 @@ export class UserService {
       return user && (await bcrypt.compare(password, user.password))
         ? await this.jwtService.signAsync({ email, _id: user._id })
         : new GraphQLError('Nah homie, wrong email/password');
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
   }
 
   async findAll() {
     try {
       return await this.UserModel.find().exec();
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      console.log(error);
     }
+  }
+
+  async updateUser(updateUserInput: UpdateUserInput) {
+    try {
+      return await this.UserModel.find().exec();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async updatePassword(
+    _id: Types.ObjectId,
+    currentPassword: string,
+    newPassword: string
+  ) {
+    try {
+      return Promise.resolve({ _id, currentPassword, newPassword });
+      // return await this.UserModel.find().exec();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async findOne(_id: Types.ObjectId) {
+    return Promise.resolve(_id);
+  }
+
+  async removeUser(_id: string) {
+    return Promise.resolve(_id);
   }
 }
