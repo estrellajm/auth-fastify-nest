@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './user.entity';
-import { CreateUser, UpdateUser } from './user-inputs.dto';
+import { CreateUser, UpdateUser } from './user.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { GraphQLError } from 'graphql';
@@ -26,7 +26,7 @@ export class UserService implements IUserService {
         .then((r) => r);
       return await new this.UserModel(createUser).save();
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 
@@ -37,9 +37,10 @@ export class UserService implements IUserService {
       });
       return user && (await bcrypt.compare(password, user.password))
         ? await this.jwtService.signAsync({ email, _id: user._id })
-        : new GraphQLError('Nah homie, wrong email/password');
+        : new HttpException('UNAUTHORIZED', HttpStatus.UNAUTHORIZED);
+      // : new GraphQLError('Nah homie, wrong email/password');
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 
@@ -47,7 +48,7 @@ export class UserService implements IUserService {
     try {
       return await Promise.resolve(undefined);
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 
@@ -55,7 +56,7 @@ export class UserService implements IUserService {
     try {
       return await this.UserModel.find().exec();
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 
@@ -65,7 +66,7 @@ export class UserService implements IUserService {
         new: true
       }).exec();
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 
@@ -84,7 +85,7 @@ export class UserService implements IUserService {
       }
       return new GraphQLError('Wrong password entered');
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 
@@ -92,7 +93,7 @@ export class UserService implements IUserService {
     try {
       return await this.UserModel.findById(_id);
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 
@@ -100,7 +101,7 @@ export class UserService implements IUserService {
     try {
       return await this.UserModel.findByIdAndRemove(_id);
     } catch (error) {
-      console.log(error);
+      return new GraphQLError(error);
     }
   }
 }

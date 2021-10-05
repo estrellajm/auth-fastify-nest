@@ -1,11 +1,15 @@
+import { HttpException } from '@nestjs/common';
 import { GraphQLError } from 'graphql';
 import { Types } from 'mongoose';
-import { CreateUser, UpdateUser } from './user-inputs.dto';
+import { CreateUser, UpdateUser } from './user.dto';
 import { User } from './user.entity';
 
 export interface IUserService {
-  createUser(createUser: CreateUser): Promise<User>;
-  login(email: string, password: string): Promise<string | GraphQLError>;
+  createUser(createUser: CreateUser): Promise<User | GraphQLError>;
+  login(
+    email: string,
+    password: string
+  ): Promise<string | HttpException | GraphQLError>;
   logout(): Promise<string | GraphQLError>;
   updateUser(
     _id: Types.ObjectId,
