@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { GraphQLError } from 'graphql';
 import { CreateUserInput } from './user-inputs.dto';
 import { User } from './user.entity';
 import { GqlAuthGuard } from './user.guard';
@@ -18,13 +19,11 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => User)
+  @Mutation(() => String)
   async login(
     @Args('email') email: string,
     @Args('password') password: string
   ) {
-    console.log(email, password);
-
     try {
       return await this.userService.login(email, password);
     } catch (err) {

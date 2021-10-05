@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import { User, UserDocument } from './user.entity';
 import { CreateUserInput } from './user-inputs.dto';
 import { JwtService } from '@nestjs/jwt';
@@ -24,15 +24,6 @@ export class UserService {
         .hash(createUserInput.password, 10)
         .then((r) => r);
       return await new this.UserModel(createUserInput).save();
-      //   if (isUser) {
-      //     throw new GraphQLError('Nah bro, you already exist');
-      //   } else {
-      //     createUserInput.password = await bcrypt
-      //       .hash(createUserInput.password, 10)
-      //       .then((r) => r);
-      //     return await new this.UserModel(createUserInput).save();
-      //   }
-      return Promise.resolve(undefined);
     } catch (err) {
       console.log(err);
     }
