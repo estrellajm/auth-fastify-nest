@@ -50,10 +50,11 @@ export class UserService {
     }
   }
 
-  async updateUser(updateUserInput: UpdateUserInput) {
+  async updateUser(_id: Types.ObjectId, updateUserInput: UpdateUserInput) {
     try {
-      return Promise.resolve(updateUserInput);
-      // return await this.UserModel.find().exec();
+      return await this.UserModel.findByIdAndUpdate(_id, updateUserInput, {
+        new: true
+      }).exec();
     } catch (error) {
       console.log(error);
     }
@@ -65,18 +66,32 @@ export class UserService {
     newPassword: string
   ) {
     try {
-      return Promise.resolve({ _id, currentPassword, newPassword });
-      // return await this.UserModel.find().exec();
+      const User = await this.UserModel.findById(_id);
+      if (await bcrypt.compare(currentPassword, User.password)) {
+        User.password = await bcrypt.hash(newPassword, 10);
+        return await new this.UserModel(User).save();
+      }
+      return new GraphQLError(
+        "Nothing to update. you've enter the same password"
+      );
     } catch (error) {
       console.log(error);
     }
   }
 
   async findOne(_id: Types.ObjectId) {
-    return Promise.resolve(_id);
+    try {
+      return await this.UserModel.findById(_id);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async removeUser(_id: string) {
-    return Promise.resolve(_id);
+    try {
+      return await this.UserModel.findByIdAndRemove(_id);
+    } catch (error) {
+      console.log(error);
+    }
   }
 }
