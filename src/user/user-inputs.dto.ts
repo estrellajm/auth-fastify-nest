@@ -1,7 +1,7 @@
 import { Field, InputType, OmitType, PartialType } from '@nestjs/graphql';
 
 @InputType()
-export class CreateUserInput {
+export class CreateUser {
   @Field()
   firstName: string;
 
@@ -19,6 +19,6 @@ export class CreateUserInput {
 }
 
 @InputType()
-export class UpdateUserInput extends PartialType(
-  OmitType(CreateUserInput, ['password', 'createdAt'] as const)
+export class UpdateUser extends PartialType(
+  OmitType(CreateUser, ['password', 'createdAt'] as const)
 ) {}

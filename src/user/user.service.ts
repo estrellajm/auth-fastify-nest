@@ -2,28 +2,29 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './user.entity';
-import { CreateUserInput, UpdateUserInput } from './user-inputs.dto';
+import { CreateUser, UpdateUser } from './user-inputs.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { GraphQLError } from 'graphql';
+import { IUserService } from './user.service.interface';
 
 @Injectable()
-export class UserService {
+export class UserService implements IUserService {
   constructor(
     private jwtService: JwtService,
     @InjectModel(User.name) private UserModel: Model<UserDocument>
   ) {}
 
-  async createUser(createUserInput: CreateUserInput) {
+  async createUser(createUser: CreateUser) {
     try {
       const isUser = await this.UserModel.findOne({
-        email: createUserInput.email
+        email: createUser.email
       });
       if (isUser) throw new GraphQLError('Nah bro, you already exist');
-      createUserInput.password = await bcrypt
-        .hash(createUserInput.password, 10)
+      createUser.password = await bcrypt
+        .hash(createUser.password, 10)
         .then((r) => r);
-      return await new this.UserModel(createUserInput).save();
+      return await new this.UserModel(createUser).save();
     } catch (error) {
       console.log(error);
     }
@@ -50,9 +51,9 @@ export class UserService {
     }
   }
 
-  async updateUser(_id: Types.ObjectId, updateUserInput: UpdateUserInput) {
+  async updateUser(_id: Types.ObjectId, updateUser: UpdateUser) {
     try {
-      return await this.UserModel.findByIdAndUpdate(_id, updateUserInput, {
+      return await this.UserModel.findByIdAndUpdate(_id, updateUser, {
         new: true
       }).exec();
     } catch (error) {
@@ -64,7 +65,7 @@ export class UserService {
     _id: Types.ObjectId,
     currentPassword: string,
     newPassword: string
-  ) {
+  ): Promise<User | GraphQLError> {
     try {
       const User = await this.UserModel.findById(_id);
       if (await bcrypt.compare(currentPassword, User.password)) {

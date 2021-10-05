@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import { GraphQLError } from 'graphql';
 import { Types } from 'mongoose';
-import { CreateUserInput, UpdateUserInput } from './user-inputs.dto';
+import { CreateUser, UpdateUser } from './user-inputs.dto';
 import { CurrentUser } from './user.decorator';
 import { User } from './user.entity';
 import { GqlAuthGuard } from './user.guard';
@@ -12,9 +13,9 @@ export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation(() => User)
-  async createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
+  async createUser(@Args('createUser') createUser: CreateUser): Promise<User> {
     try {
-      return await this.userService.createUser(createUserInput);
+      return await this.userService.createUser(createUser);
     } catch (error) {
       console.log(error);
     }
@@ -24,7 +25,7 @@ export class UserResolver {
   async login(
     @Args('email') email: string,
     @Args('password') password: string
-  ) {
+  ): Promise<string | GraphQLError> {
     try {
       return await this.userService.login(email, password);
     } catch (error) {
@@ -34,7 +35,7 @@ export class UserResolver {
 
   @Query(() => [User])
   @UseGuards(GqlAuthGuard)
-  async findAllUsers() {
+  async findAllUsers(): Promise<User[]> {
     try {
       return await this.userService.findAll();
     } catch (error) {
@@ -44,12 +45,12 @@ export class UserResolver {
 
   @Mutation(() => User)
   @UseGuards(GqlAuthGuard)
-  async updateUserInput(
+  async updateUser(
     @CurrentUser() user: User,
-    @Args('updateUserInput') updateUserInput: UpdateUserInput
-  ) {
+    @Args('updateUser') updateUser: UpdateUser
+  ): Promise<User> {
     try {
-      return await this.userService.updateUser(user._id, updateUserInput);
+      return await this.userService.updateUser(user._id, updateUser);
     } catch (error) {
       console.log(error);
     }
@@ -61,7 +62,7 @@ export class UserResolver {
     @CurrentUser() user: User,
     @Args('currentPassword') currentPassword: string,
     @Args('newPassword') newPassword: string
-  ) {
+  ): Promise<User | GraphQLError> {
     try {
       return await this.userService.updatePassword(
         user._id,
@@ -75,7 +76,9 @@ export class UserResolver {
 
   @Query(() => User)
   @UseGuards(GqlAuthGuard)
-  async findOne(@Args('_id', { type: () => String }) _id: Types.ObjectId) {
+  async findOne(
+    @Args('_id', { type: () => String }) _id: Types.ObjectId
+  ): Promise<User> {
     return await this.userService.findOne(_id);
   }
 
