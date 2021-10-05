@@ -33,6 +33,15 @@ export class UserResolver {
     }
   }
 
+  @Query(() => String)
+  async logout(): Promise<string | GraphQLError> {
+    try {
+      return await this.userService.logout();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   @Query(() => [User])
   @UseGuards(GqlAuthGuard)
   async findAllUsers(): Promise<User[]> {
@@ -64,6 +73,9 @@ export class UserResolver {
     @Args('newPassword') newPassword: string
   ): Promise<User | GraphQLError> {
     try {
+      console.log(user);
+
+      if (!user) return new GraphQLError("Ain't no one signed it");
       return await this.userService.updatePassword(
         user._id,
         currentPassword,

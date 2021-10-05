@@ -6,6 +6,7 @@ import { User } from './user.entity';
 export interface IUserService {
   createUser(createUser: CreateUser): Promise<User>;
   login(email: string, password: string): Promise<string | GraphQLError>;
+  logout(): Promise<string | GraphQLError>;
   updateUser(
     _id: Types.ObjectId,
     updateUser: UpdateUser

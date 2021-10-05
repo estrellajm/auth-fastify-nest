@@ -43,6 +43,14 @@ export class UserService implements IUserService {
     }
   }
 
+  async logout() {
+    try {
+      return await Promise.resolve(undefined);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async findAll() {
     try {
       return await this.UserModel.find().exec();
