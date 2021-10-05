@@ -52,7 +52,8 @@ export class UserService {
 
   async updateUser(updateUserInput: UpdateUserInput) {
     try {
-      return await this.UserModel.find().exec();
+      return Promise.resolve(updateUserInput);
+      // return await this.UserModel.find().exec();
     } catch (error) {
       console.log(error);
     }
