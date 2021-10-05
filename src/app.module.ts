@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { GraphQLModule } from '@nestjs/graphql';
-import { MongooseModule } from '@nestjs/mongoose';
 import { AppResolver } from './app.resolver';
 import { AppService } from './app.service';
+import { MongooseModule } from '@nestjs/mongoose';
+import { GraphQLModule } from '@nestjs/graphql';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -10,9 +11,10 @@ import { AppService } from './app.service';
     GraphQLModule.forRoot({
       autoSchemaFile: true,
       playground: true,
-      debug: false,
+      debug: false
     }),
+    UserModule
   ],
-  providers: [AppService, AppResolver],
+  providers: [AppService, AppResolver]
 })
 export class AppModule {}
