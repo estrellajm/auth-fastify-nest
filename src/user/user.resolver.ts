@@ -1,5 +1,5 @@
-import { Query, UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { CreateUserInput } from './user-inputs.dto';
 import { User } from './user.entity';
 import { GqlAuthGuard } from './user.guard';
@@ -23,6 +23,8 @@ export class UserResolver {
     @Args('email') email: string,
     @Args('password') password: string
   ) {
+    console.log(email, password);
+
     try {
       return await this.userService.login(email, password);
     } catch (err) {
@@ -30,7 +32,7 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => [User])
+  @Query(() => [User])
   @UseGuards(GqlAuthGuard)
   async findAllUsers() {
     try {
