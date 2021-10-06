@@ -1,16 +1,16 @@
 import { Module } from '@nestjs/common';
-import { UserService } from './user.service';
-import { UserResolver } from './user.resolver';
+import { UserService } from './services/user.service';
+import { UserResolver } from './resolvers/user.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './user.entity';
-import { JwtStrategy } from './jwt.strategy';
+import { User, UserSchema } from './model/user.entity';
+import { JwtStrategy } from '../../core/jwt/jwt.strategy';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     MongooseModule.forFeature(
       [{ name: User.name, schema: UserSchema }],
-      'auth'
+      'users'
     ),
     JwtModule.register({
       secret: 'reallyDifficult',

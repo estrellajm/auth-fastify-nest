@@ -11,6 +11,20 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@assets/*": ["src/assets/*"],
+      "@components/*": ["src/app/main/components/*"],
+      "@decorators/*": ["src/app/core/decorators/*"],
+      "@directives/*": ["src/app/core/directives/*"],
+      "@environments/*": ["src/environments/*"],
+      "@guards/*": ["src/app/core/guards/*"],
+      "@models/*": ["src/app/core/models/*"],
+      "@pipes/*": ["src/app/core/pipes/*"],
+      "@resolvers/*": ["src/app/core/resolvers/*"],
+      "@services/*": ["src/app/core/services/*"],
+      "@src/*": ["src/*"],
+      "@stores/*": ["src/app/core/stores/*"]
+    }
   }
 }

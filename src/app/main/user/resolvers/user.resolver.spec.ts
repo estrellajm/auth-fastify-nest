@@ -1,13 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserResolver } from './user.resolver';
+import { UserService } from '../services/user.service';
 
 describe('UserResolver', () => {
   let resolver: UserResolver;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [UserResolver]
-    }).compile();
+      providers: [UserResolver, UserService]
+    })
+      .overrideProvider(UserService)
+      .useValue({})
+      .compile();
 
     resolver = module.get<UserResolver>(UserResolver);
   });
